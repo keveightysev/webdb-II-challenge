@@ -56,4 +56,27 @@ router.post('/', (req, res) => {
 		});
 });
 
+router.put('/:id', (req, res) => {
+	if (!req.body.name) {
+		res.status(406).json({ message: 'Please enter a name for the zoo' });
+		return;
+	}
+	db('zoos')
+		.where({ id: req.params.id })
+		.update(req.body)
+		.then(updates => {
+			if (updates > 0) {
+				db('zoos')
+					.where({ id: req.params.id })
+					.first()
+					.then(zoo => {
+						res.status(200).json(zoo);
+					});
+			} else {
+				res.status(404).json({ message: 'Zoo with that ID not found' });
+			}
+		})
+		.catch(err => res.status(500).json(err));
+});
+
 module.exports = router;
