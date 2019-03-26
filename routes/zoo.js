@@ -79,4 +79,20 @@ router.put('/:id', (req, res) => {
 		.catch(err => res.status(500).json(err));
 });
 
+router.delete('/:id', (req, res) => {
+	db('zoos')
+		.where({ id: req.params.id })
+		.del()
+		.then(count => {
+			if (count > 0) {
+				res.status(200).json({ message: 'Zoo has been deleted' });
+			} else {
+				res.status(404).json({ message: 'Zoo with that id not found' });
+			}
+		})
+		.catch(err => {
+			res.status(500).json(err);
+		});
+});
+
 module.exports = router;
