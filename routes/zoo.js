@@ -13,8 +13,24 @@ const db = knex(knexConfig);
 
 router.get('/', (req, res) => {
 	db('zoos')
-		.then(animals => {
-			res.status(200).json(animals);
+		.then(zoos => {
+			res.status(200).json(zoos);
+		})
+		.catch(err => {
+			res.status(500).json(err);
+		});
+});
+
+router.get('/:id', (req, res) => {
+	db('zoos')
+		.where({ id: req.params.id })
+		.first()
+		.then(zoo => {
+			if (zoo) {
+				res.status(200).json(zoo);
+			} else {
+				res.status(404).json({ message: 'No Zoo with that ID number' });
+			}
 		})
 		.catch(err => {
 			res.status(500).json(err);
@@ -33,7 +49,7 @@ router.post('/', (req, res) => {
 			db('zoos')
 				.where({ id })
 				.first()
-				.then(animal => res.status(201).json(animal));
+				.then(zoo => res.status(201).json(zoo));
 		})
 		.catch(err => {
 			res.status(500).json(err);
