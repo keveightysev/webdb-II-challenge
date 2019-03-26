@@ -21,4 +21,23 @@ router.get('/', (req, res) => {
 		});
 });
 
+router.post('/', (req, res) => {
+	if (!req.body.name) {
+		res.status(406).json({ message: 'Please enter a name for the zoo' });
+		return;
+	}
+	db('zoos')
+		.insert(req.body)
+		.then(ids => {
+			const id = ids[0];
+			db('zoos')
+				.where({ id })
+				.first()
+				.then(animal => res.status(201).json(animal));
+		})
+		.catch(err => {
+			res.status(500).json(err);
+		});
+});
+
 module.exports = router;
